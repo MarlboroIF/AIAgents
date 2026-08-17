@@ -1,0 +1,54 @@
+name: DEV-SIT Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  dev:
+    name: DEV
+    runs-on: ubuntu-latest
+    environment: DEV
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run DEV
+        env:
+          APP_ENV: DEV
+        run: python src/main.py
+
+  sit:
+    name: SIT
+    needs: dev
+    runs-on: ubuntu-latest
+    environment: SIT
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run SIT
+        env:
+          APP_ENV: SIT
+        run: python src/main.py
